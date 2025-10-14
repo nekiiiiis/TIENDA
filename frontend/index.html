@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Productos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Gestión de Productos</h1>
+
+    <h2>Lista de productos</h2>
+
+    <div class="controls">
+      <input type="text" id="busqueda" placeholder="Buscar producto...">
+      <button id="btn-cargar">Cargar productos</button>
+    </div>
+
+    <div id="spinner" class="spinner" style="display:none"></div>
+
+    <table id="tabla-productos">
+      <thead>
+        <tr>
+          <th data-field="nombre">Nombre ⬍</th>
+          <th data-field="precio">Precio ⬍</th>
+          <th data-field="descripcion">Descripción ⬍</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div id="paginacion" class="paginacion"></div>
+
+    <h2>Añadir producto</h2>
+    <form id="form-producto">
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="number" id="precio" placeholder="Precio" required>
+      <input type="text" id="descripcion" placeholder="Descripción" required>
+      <input type="submit" value="Guardar">
+    </form>
+
+    <div id="mensaje" class="mensaje"></div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
