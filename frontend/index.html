@@ -6,8 +6,46 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Gestión de Productos</h1>
+  <!-- Panel de Login/Registro -->
+  <div id="auth-container" class="auth-container">
+    <div class="auth-box">
+      <h1>Gestión de Productos</h1>
+      
+      <!-- Tabs Login/Registro -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Iniciar Sesión</button>
+        <button class="auth-tab" id="tab-register">Registrarse</button>
+      </div>
+
+      <!-- Formulario Login -->
+      <form id="form-login" class="auth-form">
+        <h2>Iniciar Sesión</h2>
+        <input type="text" id="login-username" placeholder="Usuario" required>
+        <input type="password" id="login-password" placeholder="Contraseña" required>
+        <button type="submit">Iniciar Sesión</button>
+      </form>
+
+      <!-- Formulario Registro -->
+      <form id="form-register" class="auth-form" style="display:none">
+        <h2>Registrarse</h2>
+        <input type="text" id="register-username" placeholder="Usuario" required>
+        <input type="password" id="register-password" placeholder="Contraseña" required>
+        <button type="submit">Registrarse</button>
+      </form>
+
+      <div id="auth-mensaje" class="mensaje"></div>
+    </div>
+  </div>
+
+  <!-- Panel de Productos (oculto hasta login) -->
+  <div id="app-container" class="container" style="display:none">
+    <div class="header">
+      <h1>Gestión de Productos</h1>
+      <div class="user-info">
+        <span id="user-welcome"></span>
+        <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+      </div>
+    </div>
 
     <h2>Lista de productos</h2>
 
@@ -21,10 +59,11 @@
     <table id="tabla-productos">
       <thead>
         <tr>
+          <th>Imagen</th>
           <th data-field="nombre">Nombre ⬍</th>
           <th data-field="precio">Precio ⬍</th>
           <th data-field="descripcion">Descripción ⬍</th>
-          <th>Acciones</th>
+          <th id="acciones-header">Acciones</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -32,17 +71,60 @@
 
     <div id="paginacion" class="paginacion"></div>
 
-    <h2>Añadir producto</h2>
-    <form id="form-producto">
-      <input type="text" id="nombre" placeholder="Nombre" required>
-      <input type="number" id="precio" placeholder="Precio" required>
-      <input type="text" id="descripcion" placeholder="Descripción" required>
-      <input type="submit" value="Guardar">
-    </form>
+    <!-- Formulario solo para admin -->
+    <div id="form-container" class="product-form-container">
+      <h2><span class="icon">➕</span> Añadir producto</h2>
+      <form id="form-producto" class="product-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre del producto</label>
+            <input type="text" id="nombre" placeholder="Ej: Laptop Dell XPS" required>
+          </div>
+          <div class="form-group">
+            <label for="precio">Precio ($)</label>
+            <input type="number" id="precio" placeholder="0.00" step="0.01" min="0" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" placeholder="Describe el producto..." rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="imagen">URL de la imagen (opcional)</label>
+          <div class="image-url-container">
+            <input type="url" id="imagen" placeholder="https://ejemplo.com/imagen.jpg">
+            <div id="image-preview" class="image-preview"></div>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">
+          <span class="icon">💾</span> Guardar producto
+        </button>
+      </form>
+    </div>
 
     <div id="mensaje" class="mensaje"></div>
   </div>
 
+  <!-- Panel de Chat (oculto hasta login) -->
+  <div id="chat-container" class="chat-container" style="display:none">
+    <div class="chat-header">
+      <h2>Chat en Tiempo Real</h2>
+      <button id="btn-toggle-chat" class="btn-toggle-chat">Minimizar</button>
+    </div>
+    
+    <div class="chat-messages" id="chat-messages">
+      <!-- Los mensajes aparecerán aquí -->
+    </div>
+    
+    <div class="chat-form">
+      <form id="chat-form">
+        <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." autocomplete="off">
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

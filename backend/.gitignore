@@ -4,15 +4,28 @@ npm-debug.log
 yarn-error.log
 
 # Logs
-logs
+logs/
 *.log
 
 # Environment
 .env
+.env.local
+.env.*.local
 
 # Coverage
 coverage/
+.nyc_output/
 
 # Build
 dist/
 build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
