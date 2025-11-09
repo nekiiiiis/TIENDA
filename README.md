@@ -18,7 +18,7 @@ Sistema web de gestión de productos desarrollado con **Node.js, Express, MongoD
   - Crear productos con nombre, precio, descripción e imagen (URL)
   - Editar productos existentes
   - Eliminar productos
-  - Vista previa de imágenes en tiempo real
+  - Añadir y eliminar imagenes
 
 ### Chat en Tiempo Real
 - Chat en vivo entre usuarios autenticados
