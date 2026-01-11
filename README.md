@@ -1,7 +1,5 @@
 # PyroShop - Plataforma E-Commerce
 
-**Repositorio:** https://github.com/nekiiiiis/TIENDA
-
 ## Descripción
 
 Aplicación web de comercio electrónico desarrollada con Node.js, Express, MongoDB y GraphQL. Implementa autenticación JWT, control de acceso basado en roles, carrito de compras persistente, gestión de pedidos y comunicación en tiempo real mediante WebSockets.
