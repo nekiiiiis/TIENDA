@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - PyroShop</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --primary: #ff4757;
+      --primary-dark: #e83e4d;
+      --secondary: #ffa502;
+      --dark: #2c3e50;
+      --dark-bg: #1e272e;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+      --success: #28a745;
+      --danger: #dc3545;
+      --purple: #764ba2;
+      --gradient-fire: linear-gradient(135deg, #ff4757 0%, #ffa502 100%);
+      --gradient-night: linear-gradient(135deg, #2c3e50 0%, #1e272e 100%);
+      --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+      --border-color: #e1e8ed;
+    }
+
+    .admin-page-body {
+      background: var(--light);
+      min-height: 100vh;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+      background: var(--gradient-night);
+      padding: 50px 0 30px;
+      color: white;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+    }
+
+    .header-title h1 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .header-title h1 span {
+      background: var(--gradient-fire);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-title p {
+      color: rgba(255,255,255,0.8);
+      font-size: 16px;
+    }
+
+    .admin-badge {
+      background: var(--gradient-fire);
+      padding: 12px 24px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255,255,255,0.15);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .stat-icon.users { background: rgba(255, 165, 2, 0.3); }
+    .stat-icon.orders { background: rgba(255, 71, 87, 0.3); }
+    .stat-icon.pending { background: rgba(255, 193, 7, 0.3); }
+    .stat-icon.completed { background: rgba(40, 167, 69, 0.3); }
+
+    .stat-info h3 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-info p {
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px 50px;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs-custom {
+      display: flex;
+      gap: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow-sm);
+      width: fit-content;
+    }
+
+    .nav-tab {
+      padding: 15px 30px;
+      border: none;
+      background: transparent;
+      color: var(--gray);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-tab:hover {
+      color: var(--dark);
+      background: var(--light);
+    }
+
+    .nav-tab.active {
+      background: var(--gradient-fire);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    }
+
+    .tab-count {
+      background: rgba(255,255,255,0.25);
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 13px;
+    }
+
+    .nav-tab:not(.active) .tab-count {
+      background: var(--light);
+      color: var(--gray);
+    }
+
+    /* Section */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header-custom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    /* Filter Buttons */
+    .filters {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-btn-custom {
+      padding: 10px 20px;
+      border: 2px solid var(--border-color);
+      background: white;
+      color: var(--gray);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 25px;
+      transition: all 0.3s;
+    }
+
+    .filter-btn-custom:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .filter-btn-custom.active {
+      background: var(--gradient-fire);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* Table */
+    .table-wrapper {
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .admin-table-custom {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .admin-table-custom th {
+      background: var(--light);
+      padding: 18px 25px;
+      text-align: left;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray);
+      font-weight: 600;
+    }
+
+    .admin-table-custom td {
+      padding: 18px 25px;
+      border-top: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .admin-table-custom tbody tr {
+      transition: background 0.2s;
+    }
+
+    .admin-table-custom tbody tr:hover {
+      background: #fafafa;
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: var(--gradient-fire);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: white;
+    }
+
+    .user-info .user-name {
+      font-weight: 600;
+      margin-bottom: 3px;
+      color: var(--dark);
+    }
+
+    .user-info .user-id {
+      font-size: 12px;
+      color: var(--gray);
+      font-family: monospace;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .badge-admin {
+      background: var(--gradient-purple);
+      color: white;
+    }
+
+    .badge-user {
+      background: var(--light);
+      color: var(--gray);
+    }
+
+    .badge-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .badge-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .current-user-tag {
+      background: var(--secondary);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 12px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-fire);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: white;
+      border: 2px solid var(--border-color);
+      color: var(--gray);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    .btn-danger {
+      background: #fee;
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+
+    .btn-warning-custom {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .btn-warning-custom:hover {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    /* Orders Grid */
+    .orders-grid-custom {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .order-card-custom {
+      background: white;
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .order-card-custom:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+
+    .order-card-header-custom {
+      background: var(--light);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order-number {
+      font-family: monospace;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .order-card-body-custom {
+      padding: 20px;
+    }
+
+    .order-info-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .order-info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .order-info-row .icon {
+      width: 35px;
+      height: 35px;
+      background: var(--light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .order-card-footer-custom {
+      background: var(--light);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .order-total-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Empty State */
+    .empty-state-custom {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty-icon-custom {
+      font-size: 60px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-state-custom h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+
+    .empty-state-custom p {
+      color: var(--gray);
+    }
+
+    /* Modal */
+    .modal-custom {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-custom.active {
+      display: flex;
+    }
+
+    .modal-content-custom {
+      background: white;
+      border-radius: 25px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalIn 0.3s ease;
+      box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header-custom {
+      background: var(--gradient-fire);
+      color: white;
+      padding: 25px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header-custom h2 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close-custom {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .modal-close-custom:hover {
+      background: rgba(255,255,255,0.3);
+      transform: rotate(90deg);
+    }
+
+    .modal-body-custom {
+      padding: 30px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .detail-item {
+      background: var(--light);
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .detail-value.price {
+      color: var(--primary);
+      font-size: 22px;
+    }
+
+    .items-section h3 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: var(--dark);
+    }
+
+    .order-items-custom {
+      background: var(--light);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .order-item-custom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .order-item-custom:last-child {
+      border-bottom: none;
+    }
+
+    .item-info-custom {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-name-custom {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 3px;
+    }
+
+    .item-quantity-custom {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    .item-subtotal-custom {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .modal-footer-custom {
+      padding: 20px 30px;
+      background: var(--light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Access Denied */
+    .access-denied-custom {
+      min-height: 70vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px 20px;
+    }
+
+    .denied-box-custom {
+      text-align: center;
+      background: white;
+      padding: 60px 40px;
+      border-radius: 30px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .denied-icon-custom {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    .denied-box-custom h2 {
+      font-size: 32px;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    .denied-box-custom p {
+      color: var(--gray);
+      margin-bottom: 30px;
+    }
+
+    /* Loading Spinner */
+    .spinner-overlay-custom {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    }
+
+    .spinner-custom {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast */
+    .toast-custom {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 18px 28px;
+      border-radius: 15px;
+      font-weight: 600;
+      z-index: 4000;
+      animation: toastIn 0.3s ease;
+      display: none;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .toast-custom.show {
+      display: block;
+    }
+
+    .toast-custom.success {
+      background: var(--success);
+      color: white;
+    }
+
+    .toast-custom.error {
+      background: var(--danger);
+      color: white;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav-tabs-custom {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .nav-tab {
+        justify-content: center;
+      }
+
+      .orders-grid-custom {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-top {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .section-header-custom {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+
+      .filters {
+        flex-wrap: wrap;
+      }
+
+      .admin-table-custom {
+        font-size: 13px;
+      }
+
+      .admin-table-custom th, 
+      .admin-table-custom td {
+        padding: 12px 15px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .header-title h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body class="admin-page-body">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-icon">🎆</span>
+        <span class="logo-text">PyroShop</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="/" class="nav-link">Inicio</a>
+        <a href="/productos.html" class="nav-link">Productos</a>
+        <a href="/admin.html" class="nav-link active">Admin</a>
+        <a href="/chat.html" class="nav-link">Soporte</a>
+        <div id="nav-user-info" class="nav-user-info" style="display:none">
+          <span id="nav-username"></span>
+          <button id="btn-logout" class="btn-logout-nav">Cerrar Sesión</button>
+        </div>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Access Denied -->
+  <section id="access-denied" class="access-denied-custom" style="display:none">
+    <div class="denied-box-custom">
+      <div class="denied-icon-custom">🚫</div>
+      <h2>Acceso Denegado</h2>
+      <p>Necesitas permisos de administrador para acceder a esta página.</p>
+      <a href="/productos.html" class="btn btn-primary">Ir a Productos</a>
+    </div>
+  </section>
+
+  <!-- Admin Content -->
+  <div id="admin-content" style="display:none">
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <div class="header-top">
+          <div class="header-title">
+            <h1>🔧 Panel de <span>Administración</span></h1>
+            <p>Gestiona usuarios y pedidos de la plataforma</p>
+          </div>
+          <div class="admin-badge">
+            <span>👑</span>
+            <span>Administrador</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon users">👥</div>
+            <div class="stat-info">
+              <h3 id="stat-users">0</h3>
+              <p>Usuarios</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orders">📦</div>
+            <div class="stat-info">
+              <h3 id="stat-orders">0</h3>
+              <p>Total Pedidos</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon pending">⏳</div>
+            <div class="stat-info">
+              <h3 id="stat-pending">0</h3>
+              <p>En Curso</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon completed">✅</div>
+            <div class="stat-info">
+              <h3 id="stat-completed">0</h3>
+              <p>Completados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Navigation Tabs -->
+      <div class="nav-tabs-custom">
+        <button class="nav-tab active" data-tab="users">
+          <span>👥</span>
+          Usuarios
+          <span class="tab-count" id="tab-users-count">0</span>
+        </button>
+        <button class="nav-tab" data-tab="orders">
+          <span>📦</span>
+          Pedidos
+          <span class="tab-count" id="tab-orders-count">0</span>
+        </button>
+      </div>
+
+      <!-- Users Section -->
+      <section id="users-section" class="section active">
+        <div class="section-header-custom">
+          <h2 class="section-title">Gestión de Usuarios</h2>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="admin-table-custom">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Fecha de Registro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+            </tbody>
+          </table>
+        </div>
+
+        <div id="no-users" class="empty-state-custom" style="display:none">
+          <div class="empty-icon-custom">👥</div>
+          <h3>No hay usuarios</h3>
+          <p>Aún no se han registrado usuarios en la plataforma.</p>
+        </div>
+      </section>
+
+      <!-- Orders Section -->
+      <section id="orders-section" class="section">
+        <div class="section-header-custom">
+          <h2 class="section-title">Gestión de Pedidos</h2>
+          <div class="filters">
+            <button class="filter-btn-custom active" data-filter="all">Todos</button>
+            <button class="filter-btn-custom" data-filter="pending">⏳ En curso</button>
+            <button class="filter-btn-custom" data-filter="completed">✅ Completados</button>
+          </div>
+        </div>
+
+        <div class="orders-grid-custom" id="orders-grid">
+        </div>
+
+        <div id="no-orders" class="empty-state-custom" style="display:none">
+          <div class="empty-icon-custom">📦</div>
+          <h3>No hay pedidos</h3>
+          <p>Aún no se han realizado pedidos en la plataforma.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Order Detail Modal -->
+  <div id="order-modal" class="modal-custom">
+    <div class="modal-content-custom">
+      <div class="modal-header-custom">
+        <h2><span>📋</span> Detalle del Pedido</h2>
+        <button class="modal-close-custom" id="close-modal">&times;</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">ID del Pedido</div>
+            <div class="detail-value" id="modal-order-id"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Estado</div>
+            <div class="detail-value" id="modal-order-status"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Cliente</div>
+            <div class="detail-value" id="modal-order-user"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Fecha</div>
+            <div class="detail-value" id="modal-order-date"></div>
+          </div>
+        </div>
+
+        <div class="items-section">
+          <h3>🛒 Productos del Pedido</h3>
+          <div class="order-items-custom" id="modal-order-items">
+          </div>
+        </div>
+
+        <div class="detail-item" style="margin-top: 20px;">
+          <div class="detail-label">Total del Pedido</div>
+          <div class="detail-value price" id="modal-order-total"></div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button id="btn-mark-pending" class="btn btn-warning-custom" style="display:none">
+          ⏳ Marcar En Curso
+        </button>
+        <button id="btn-mark-completed" class="btn btn-success">
+          ✅ Marcar Completado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="spinner" class="spinner-overlay-custom" style="display:none">
+    <div class="spinner-custom"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast-custom"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3><span class="logo-icon">🎆</span> PyroShop</h3>
+          <p>Tu tienda de confianza para fuegos artificiales.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces</h4>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/productos.html">Productos</a></li>
+            <li><a href="/chat.html">Soporte</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 PyroShop. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="admin.js"></script>
+</body>
+</html>

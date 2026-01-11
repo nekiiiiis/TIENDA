@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos - PyroShop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="productos-page">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">🎆</span>
+        <span class="logo-text">PyroShop</span>
+      </div>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Inicio</a>
+        <a href="/productos.html" class="nav-link active">Productos</a>
+        <a href="/carrito.html" class="nav-link nav-cart">
+          🛒 Carrito
+          <span id="nav-cart-count" class="cart-count-badge" style="display:none">0</span>
+        </a>
+        <a href="/chat.html" class="nav-link">Soporte</a>
+        <div id="nav-user-info" class="nav-user-info" style="display:none">
+          <a href="/pedidos.html" id="nav-username" class="nav-username-link" title="Mis Pedidos"></a>
+          <button id="btn-logout" class="btn-logout-nav">Cerrar Sesión</button>
+        </div>
+        <button id="btn-auth-nav" class="btn-auth">Iniciar Sesión</button>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Products Header -->
+  <section class="products-header">
+    <div class="container">
+      <h1>Nuestro Catálogo</h1>
+      <p>Descubre nuestra amplia selección de fuegos artificiales y petardos</p>
+    </div>
+  </section>
+
+  <!-- Filters and Search -->
+  <section class="products-controls">
+    <div class="container">
+      <div class="filters-container">
+        <div class="search-bar">
+          <input type="text" id="busqueda" placeholder="🔍 Buscar productos...">
+        </div>
+        <div class="category-filters">
+          <button class="filter-btn active" data-category="todas">Todas</button>
+          <button class="filter-btn" data-category="fuegos-artificiales">🎆 Fuegos Artificiales</button>
+          <button class="filter-btn" data-category="petardos">💥 Petardos</button>
+          <button class="filter-btn" data-category="bengalas">✨ Bengalas</button>
+          <button class="filter-btn" data-category="cohetes">🎇 Cohetes</button>
+          <button class="filter-btn" data-category="otros">📦 Otros</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Botón flotante para admin -->
+  <button id="btn-toggle-admin-panel" class="btn-floating-admin" style="display:none">
+    <span class="btn-icon">➕</span>
+    <span class="btn-text">Añadir Producto</span>
+  </button>
+
+  <!-- Spinner -->
+  <div id="spinner" class="spinner-overlay" style="display:none">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Products Grid -->
+  <section class="products-section">
+    <div class="container">
+      <div id="products-grid" class="products-grid">
+        <!-- Los productos se cargarán aquí dinámicamente -->
+      </div>
+      <div id="no-products" class="no-products" style="display:none">
+        <p>No se encontraron productos</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pagination -->
+  <div id="paginacion" class="paginacion"></div>
+
+  <!-- Admin Panel (solo visible para administradores) -->
+  <section id="admin-panel" class="admin-panel admin-panel-collapsed" style="display:none">
+    <div class="container">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-header-content">
+            <h2>🔧 Panel de Administración</h2>
+            <p>Gestiona el catálogo de productos</p>
+          </div>
+          <button id="btn-close-admin-panel" class="btn-close-panel">✕</button>
+        </div>
+        
+        <div class="admin-card-body">
+          <div class="form-header">
+            <div class="form-icon">➕</div>
+            <div>
+              <h3>Añadir Nuevo Producto</h3>
+              <p>Completa todos los campos para agregar un producto al catálogo</p>
+            </div>
+          </div>
+          
+          <form id="form-producto" class="modern-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nombre">
+                  <span class="label-icon">📝</span>
+                  Nombre del producto
+                </label>
+                <input type="text" id="nombre" placeholder="Ej: Cohete Estrella Premium" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="precio">
+                  <span class="label-icon">💰</span>
+                  Precio (€)
+                </label>
+                <input type="number" id="precio" placeholder="0.00" step="0.01" min="0" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="categoria">
+                <span class="label-icon">🏷️</span>
+                Categoría
+              </label>
+              <select id="categoria" required>
+                <option value="">Selecciona una categoría</option>
+                <option value="fuegos-artificiales">🎆 Fuegos Artificiales</option>
+                <option value="petardos">💥 Petardos</option>
+                <option value="bengalas">✨ Bengalas</option>
+                <option value="cohetes">🎇 Cohetes</option>
+                <option value="otros">📦 Otros</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="descripcion">
+                <span class="label-icon">📄</span>
+                Descripción
+              </label>
+              <textarea id="descripcion" placeholder="Describe las características del producto, efectos, duración, etc..." rows="4" required></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="imagen">
+                <span class="label-icon">🖼️</span>
+                URL de la imagen
+              </label>
+              <input type="url" id="imagen" placeholder="https://ejemplo.com/imagen.jpg">
+              <div id="image-preview" class="modern-image-preview"></div>
+            </div>
+            
+            <button type="submit" class="btn-modern-submit">
+              <span class="btn-icon">💾</span>
+              <span>Guardar Producto</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mensaje -->
+  <div id="mensaje" class="mensaje-toast"></div>
+
+  <!-- Modal de edición de producto -->
+  <div id="edit-modal" class="modal" style="display:none">
+    <div class="modal-content">
+      <span class="modal-close" id="close-edit-modal">&times;</span>
+      <div class="modal-body">
+        <h2>✏️ Editar Producto</h2>
+        <form id="form-editar" class="modern-form">
+          <input type="hidden" id="edit-id">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="edit-nombre">Nombre</label>
+              <input type="text" id="edit-nombre" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-precio">Precio (€)</label>
+              <input type="number" id="edit-precio" step="0.01" min="0" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="edit-categoria">Categoría</label>
+            <select id="edit-categoria" required>
+              <option value="fuegos-artificiales">🎆 Fuegos Artificiales</option>
+              <option value="petardos">💥 Petardos</option>
+              <option value="bengalas">✨ Bengalas</option>
+              <option value="cohetes">🎇 Cohetes</option>
+              <option value="otros">📦 Otros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-descripcion">Descripción</label>
+            <textarea id="edit-descripcion" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-imagen">URL de la imagen</label>
+            <input type="url" id="edit-imagen">
+            <div id="edit-image-preview" class="image-preview"></div>
+          </div>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Detalles del Producto -->
+  <div id="product-detail-modal" class="modal">
+    <div class="modal-content modal-product-detail">
+      <span class="modal-close" id="close-product-detail">&times;</span>
+      <div class="product-detail-container">
+        <div class="product-detail-image">
+          <img id="detail-imagen" src="" alt="Producto">
+          <span id="detail-categoria-badge" class="detail-category-badge"></span>
+        </div>
+        <div class="product-detail-info">
+          <h2 id="detail-nombre" class="product-detail-title"></h2>
+          <div class="product-detail-price-container">
+            <span id="detail-precio" class="product-detail-price"></span>
+            <span id="detail-categoria-text" class="product-detail-category"></span>
+          </div>
+          <div class="product-detail-description">
+            <h3>📄 Descripción</h3>
+            <p id="detail-descripcion"></p>
+          </div>
+          <div class="product-detail-meta">
+            <div class="meta-item">
+              <span class="meta-label">🆔 ID:</span>
+              <span id="detail-id" class="meta-value"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">📅 Creado:</span>
+              <span id="detail-fecha" class="meta-value"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Login/Registro -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="close-auth-modal">&times;</span>
+      <div class="auth-box">
+        <h2>Acceso de Usuario</h2>
+        
+        <!-- Tabs Login/Registro -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login">Iniciar Sesión</button>
+          <button class="auth-tab" id="tab-register">Registrarse</button>
+        </div>
+
+        <!-- Formulario Login -->
+        <form id="form-login" class="auth-form">
+          <input type="text" id="login-username" placeholder="Usuario" required>
+          <input type="password" id="login-password" placeholder="Contraseña" required>
+          <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
+
+        <!-- Formulario Registro -->
+        <form id="form-register" class="auth-form" style="display:none">
+          <input type="text" id="register-username" placeholder="Usuario" required>
+          <input type="password" id="register-password" placeholder="Contraseña" required>
+          <button type="submit" class="btn btn-primary">Registrarse</button>
+        </form>
+
+        <div id="auth-mensaje" class="mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3><span class="logo-icon">🎆</span> PyroShop</h3>
+          <p>Tu tienda de confianza para fuegos artificiales.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces</h4>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/productos.html">Productos</a></li>
+            <li><a href="/chat.html">Soporte</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 PyroShop. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="productos.js"></script>
+</body>
+</html>
+

@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const Producto = require("../models/Producto");
+const Product = require("../models/Product");
 const { verifyToken, verifyTokenAndAdmin } = require("../middlewares/auth");
 const AuditLog = require("../models/AuditLog");
 
 // Obtener todos
 router.get("/", async (req, res, next) => {
   try {
-    const productos = await Producto.find().sort({ createdAt: -1 });
+    const productos = await Product.find().sort({ createdAt: -1 });
     res.json(productos);
     // Registrar auditoría si hay token (opcional para GET)
     if (req.header('Authorization')) {
@@ -36,10 +36,11 @@ router.post("/", verifyTokenAndAdmin, async (req, res, next) => {
       nombre: req.body.nombre,
       precio: req.body.precio,
       descripcion: req.body.descripcion,
-      imagen: req.body.imagen || null // URL de la imagen
+      imagen: req.body.imagen || null, // URL de la imagen
+      categoria: req.body.categoria || 'otros' // Categoría del producto
     };
 
-    const nuevo = new Producto(productoData);
+    const nuevo = new Product(productoData);
     await nuevo.save();
     res.status(201).json(nuevo);
     // Auditoría
@@ -63,17 +64,18 @@ router.post("/", verifyTokenAndAdmin, async (req, res, next) => {
 // Actualizar (solo admin)
 router.put("/:id", verifyTokenAndAdmin, async (req, res, next) => {
   try {
-    const producto = await Producto.findById(req.params.id);
+    const producto = await Product.findById(req.params.id);
     if (!producto) return res.status(404).json({ error: "Producto no encontrado" });
 
     const productoData = {
       nombre: req.body.nombre,
       precio: req.body.precio,
       descripcion: req.body.descripcion,
-      imagen: req.body.imagen !== undefined ? req.body.imagen : producto.imagen // Mantener imagen actual si no se proporciona nueva
+      imagen: req.body.imagen !== undefined ? req.body.imagen : producto.imagen, // Mantener imagen actual si no se proporciona nueva
+      categoria: req.body.categoria || producto.categoria // Mantener categoría actual si no se proporciona nueva
     };
 
-    const actualizado = await Producto.findByIdAndUpdate(req.params.id, productoData, { new: true });
+    const actualizado = await Product.findByIdAndUpdate(req.params.id, productoData, { new: true });
     res.json(actualizado);
     // Auditoría
     AuditLog.create({
@@ -96,7 +98,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res, next) => {
 // Eliminar (solo admin)
 router.delete("/:id", verifyTokenAndAdmin, async (req, res, next) => {
   try {
-    const eliminado = await Producto.findByIdAndDelete(req.params.id);
+    const eliminado = await Product.findByIdAndDelete(req.params.id);
     if (!eliminado) return res.status(404).json({ error: "Producto no encontrado" });
     
     res.json({ mensaje: "Producto eliminado" });
@@ -118,3 +120,4 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res, next) => {
 });
 
 module.exports = router;
+

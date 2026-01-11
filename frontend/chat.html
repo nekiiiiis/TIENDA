@@ -2,83 +2,214 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soporte en Vivo - PyroShop</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <div class="chat-container" style="display:flex">
-    <div class="chat-header">
-      <h2>Chat en Tiempo Real</h2>
-      <a href="/" class="btn-toggle-chat" style="text-decoration:none; padding:6px 10px">Volver</a>
+<body class="chat-page">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">🎆</span>
+        <span class="logo-text">PyroShop</span>
+      </div>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Inicio</a>
+        <a href="/productos.html" class="nav-link">Productos</a>
+        <a href="/carrito.html" class="nav-link">🛒 Carrito</a>
+        <a href="/chat.html" class="nav-link active">Soporte</a>
+        <div id="nav-user-info" class="nav-user-info" style="display:none">
+          <a href="/pedidos.html" id="nav-username" class="nav-username-link" title="Mis Pedidos"></a>
+          <button id="btn-logout" class="btn-logout-nav">Cerrar Sesión</button>
+        </div>
+        <button id="btn-auth-nav" class="btn-auth">Iniciar Sesión</button>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
-    <div class="chat-messages" id="chat-messages"></div>
-    <div class="chat-form">
-      <form id="chat-form">
-        <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." autocomplete="off">
-        <button type="submit">Enviar</button>
-      </form>
+  </nav>
+
+  <!-- Chat Container -->
+  <div class="chat-page-container">
+    <div class="container">
+      
+      <!-- Mensaje de bienvenida / Login requerido -->
+      <div id="chat-login-required" class="chat-login-required">
+        <div class="chat-welcome-box">
+          <div class="chat-welcome-icon">💬</div>
+          <h2>Chat de Soporte en Vivo</h2>
+          <p>Conecta con nuestro equipo de soporte para resolver todas tus dudas sobre nuestros productos.</p>
+          <p class="chat-note">⚠️ Debes iniciar sesión para acceder al chat</p>
+          <button id="btn-login-chat" class="btn btn-primary btn-large">Iniciar Sesión</button>
+        </div>
+      </div>
+
+      <!-- Chat Main - Usuario Normal -->
+      <div id="chat-user" class="chat-main-container" style="display:none">
+        <div class="chat-card">
+          <div class="chat-card-header">
+            <div class="chat-header-info">
+              <h2>💬 Chat de Soporte</h2>
+              <span class="chat-status">🟢 En línea</span>
+            </div>
+            <div class="chat-user-info">
+              <span id="chat-username"></span>
+            </div>
+          </div>
+          
+          <div class="chat-card-body">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-system-message">
+                <p>👋 ¡Bienvenido al chat de soporte! ¿En qué podemos ayudarte?</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-card-footer">
+            <form id="chat-form" class="chat-input-form">
+              <input 
+                type="text" 
+                id="chat-input" 
+                placeholder="Escribe tu mensaje..." 
+                autocomplete="off"
+                required
+              >
+              <button type="submit" class="btn-send">
+                <span class="send-icon">📤</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Admin - Vista de Conversaciones -->
+      <div id="chat-admin" class="chat-admin-container" style="display:none">
+        <div class="chat-admin-layout">
+          
+          <!-- Lista de Conversaciones -->
+          <div class="conversations-sidebar">
+            <div class="sidebar-header">
+              <h3>💬 Conversaciones</h3>
+              <span id="conversations-count" class="count-badge">0</span>
+            </div>
+            <div id="conversations-list" class="conversations-list">
+              <div class="no-conversations">
+                <p>😴 No hay conversaciones activas</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ventana de Chat -->
+          <div class="chat-window">
+            <div id="no-conversation-selected" class="no-conversation-selected">
+              <div class="empty-state">
+                <div class="empty-icon">💬</div>
+                <h3>Selecciona una conversación</h3>
+                <p>Elige un usuario de la lista para ver y responder sus mensajes</p>
+              </div>
+            </div>
+
+            <div id="active-conversation" class="active-conversation" style="display:none">
+              <div class="conversation-header">
+                <div class="conversation-user-info">
+                  <div class="user-avatar" id="active-user-avatar">👤</div>
+                  <div>
+                    <h3 id="active-user-name">Usuario</h3>
+                    <span class="user-status" id="active-user-status">🟢 En línea</span>
+                  </div>
+                </div>
+                <button id="btn-delete-conversation" class="btn-delete-conversation" title="Eliminar conversación completa">
+                  🗑️ Eliminar Conversación
+                </button>
+              </div>
+
+              <div class="conversation-messages" id="conversation-messages">
+                <!-- Mensajes se cargarán aquí -->
+              </div>
+
+              <div class="conversation-input">
+                <form id="admin-chat-form" class="chat-input-form">
+                  <input 
+                    type="text" 
+                    id="admin-chat-input" 
+                    placeholder="Escribe tu respuesta..." 
+                    autocomplete="off"
+                    required
+                  >
+                  <button type="submit" class="btn-send">
+                    <span class="send-icon">📤</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 
+  <!-- Modal de Login/Registro -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="close-auth-modal">&times;</span>
+      <div class="auth-box">
+        <h2>Acceso de Usuario</h2>
+        
+        <!-- Tabs Login/Registro -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login">Iniciar Sesión</button>
+          <button class="auth-tab" id="tab-register">Registrarse</button>
+        </div>
+
+        <!-- Formulario Login -->
+        <form id="form-login" class="auth-form">
+          <input type="text" id="login-username" placeholder="Usuario" required>
+          <input type="password" id="login-password" placeholder="Contraseña" required>
+          <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
+
+        <!-- Formulario Registro -->
+        <form id="form-register" class="auth-form" style="display:none">
+          <input type="text" id="register-username" placeholder="Usuario" required>
+          <input type="password" id="register-password" placeholder="Contraseña" required>
+          <button type="submit" class="btn btn-primary">Registrarse</button>
+        </form>
+
+        <div id="auth-mensaje" class="mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3><span class="logo-icon">🎆</span> PyroShop</h3>
+          <p>Tu tienda de confianza para fuegos artificiales.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces</h4>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/productos.html">Productos</a></li>
+            <li><a href="/chat.html">Soporte</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 PyroShop. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    // Verificar autenticación simple por token en localStorage
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    if (!token || !user) {
-      alert('Debes iniciar sesión para acceder al chat');
-      window.location.href = '/';
-    }
-
-    const userData = JSON.parse(user);
-    const socket = io({ auth: { token } });
-
-    const chatMessages = document.getElementById('chat-messages');
-    const chatForm = document.getElementById('chat-form');
-    const chatInput = document.getElementById('chat-input');
-
-    socket.on('chat message', (data) => {
-      agregarMensaje(data.message, data.username, data.timestamp, data.username !== userData.username);
-    });
-
-    socket.on('user joined', (username) => {
-      if (username !== userData.username) {
-        notificar(`${username} se ha unido al chat`);
-      }
-    });
-
-    chatForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const mensaje = chatInput.value.trim();
-      if (!mensaje) return;
-      socket.emit('chat message', { message: mensaje });
-      chatInput.value = '';
-    });
-
-    function agregarMensaje(mensaje, username, timestamp, esOtro = true) {
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `chat-message ${esOtro ? 'other' : 'own'}`;
-      const infoDiv = document.createElement('div');
-      infoDiv.className = 'chat-message-info';
-      infoDiv.textContent = `${username} - ${timestamp}`;
-      const messageTextDiv = document.createElement('div');
-      messageTextDiv.textContent = mensaje;
-      messageDiv.appendChild(infoDiv);
-      messageDiv.appendChild(messageTextDiv);
-      chatMessages.appendChild(messageDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function notificar(texto) {
-      const div = document.createElement('div');
-      div.className = 'user-joined';
-      div.textContent = texto;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      setTimeout(() => div.remove(), 3000);
-    }
-  </script>
+  <script src="chat-page.js"></script>
 </body>
 </html>
-
-

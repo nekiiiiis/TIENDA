@@ -2,129 +2,190 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Gestión de Productos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PyroShop - Petardos y Fuegos Artificiales</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <!-- Panel de Login/Registro -->
-  <div id="auth-container" class="auth-container">
-    <div class="auth-box">
-      <h1>Gestión de Productos</h1>
-      
-      <!-- Tabs Login/Registro -->
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login">Iniciar Sesión</button>
-        <button class="auth-tab" id="tab-register">Registrarse</button>
+<body class="landing-page">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">🎆</span>
+        <span class="logo-text">PyroShop</span>
       </div>
-
-      <!-- Formulario Login -->
-      <form id="form-login" class="auth-form">
-        <h2>Iniciar Sesión</h2>
-        <input type="text" id="login-username" placeholder="Usuario" required>
-        <input type="password" id="login-password" placeholder="Contraseña" required>
-        <button type="submit">Iniciar Sesión</button>
-      </form>
-
-      <!-- Formulario Registro -->
-      <form id="form-register" class="auth-form" style="display:none">
-        <h2>Registrarse</h2>
-        <input type="text" id="register-username" placeholder="Usuario" required>
-        <input type="password" id="register-password" placeholder="Contraseña" required>
-        <button type="submit">Registrarse</button>
-      </form>
-
-      <div id="auth-mensaje" class="mensaje"></div>
+      <div class="nav-links">
+        <a href="/" class="nav-link active">Inicio</a>
+        <a href="/productos.html" class="nav-link">Productos</a>
+        <a href="/carrito.html" class="nav-link">🛒 Carrito</a>
+        <a href="/chat.html" class="nav-link">Soporte</a>
+        <button id="btn-auth" class="btn-auth">Iniciar Sesión</button>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
-  </div>
+  </nav>
 
-  <!-- Panel de Productos (oculto hasta login) -->
-  <div id="app-container" class="container" style="display:none">
-    <div class="header">
-      <h1>Gestión de Productos</h1>
-      <div class="user-info">
-        <span id="user-welcome"></span>
-        <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-background"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Ilumina tus celebraciones
+        <span class="hero-subtitle">con los mejores fuegos artificiales</span>
+      </h1>
+      <p class="hero-description">
+        Petardos, cohetes, bengalas y más. Todo lo que necesitas para hacer de tu evento algo inolvidable.
+      </p>
+      <div class="hero-buttons">
+        <a href="/productos.html" class="btn btn-primary">Ver Catálogo</a>
+        <a href="/chat.html" class="btn btn-secondary">Contactar Soporte</a>
       </div>
     </div>
-
-    <h2>Lista de productos</h2>
-
-    <div class="controls">
-      <input type="text" id="busqueda" placeholder="Buscar producto...">
-      <button id="btn-cargar">Cargar productos</button>
+    <div class="hero-decoration">
+      <div class="firework"></div>
+      <div class="firework"></div>
+      <div class="firework"></div>
     </div>
+  </section>
 
-    <div id="spinner" class="spinner" style="display:none"></div>
-
-    <table id="tabla-productos">
-      <thead>
-        <tr>
-          <th>Imagen</th>
-          <th data-field="nombre">Nombre ⬍</th>
-          <th data-field="precio">Precio ⬍</th>
-          <th data-field="descripcion">Descripción ⬍</th>
-          <th id="acciones-header">Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <div id="paginacion" class="paginacion"></div>
-
-    <!-- Formulario solo para admin -->
-    <div id="form-container" class="product-form-container">
-      <h2><span class="icon">➕</span> Añadir producto</h2>
-      <form id="form-producto" class="product-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="nombre">Nombre del producto</label>
-            <input type="text" id="nombre" placeholder="Ej: Laptop Dell XPS" required>
-          </div>
-          <div class="form-group">
-            <label for="precio">Precio ($)</label>
-            <input type="number" id="precio" placeholder="0.00" step="0.01" min="0" required>
-          </div>
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">¿Por qué elegirnos?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎇</div>
+          <h3>Productos de Calidad</h3>
+          <p>Seleccionamos los mejores fuegos artificiales del mercado para garantizar espectáculos increíbles.</p>
         </div>
-        <div class="form-group">
-          <label for="descripcion">Descripción</label>
-          <textarea id="descripcion" placeholder="Describe el producto..." rows="3" required></textarea>
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Envío Rápido</h3>
+          <p>Recibe tus productos en tiempo récord. Envíos seguros y confiables a todo el país.</p>
         </div>
-        <div class="form-group">
-          <label for="imagen">URL de la imagen (opcional)</label>
-          <div class="image-url-container">
-            <input type="url" id="imagen" placeholder="https://ejemplo.com/imagen.jpg">
-            <div id="image-preview" class="image-preview"></div>
-          </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Soporte 24/7</h3>
+          <p>Nuestro equipo está disponible para ayudarte en cualquier momento. Chat en vivo con expertos.</p>
         </div>
-        <button type="submit" class="btn-submit">
-          <span class="icon">💾</span> Guardar producto
-        </button>
-      </form>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Compra Segura</h3>
+          <p>Todas las transacciones están protegidas. Cumplimos con todas las normativas de seguridad.</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <div id="mensaje" class="mensaje"></div>
+  <!-- Categories Section -->
+  <section class="categories">
+    <div class="container">
+      <h2 class="section-title">Nuestras Categorías</h2>
+      <div class="categories-grid">
+        <div class="category-card">
+          <div class="category-image">🎆</div>
+          <h3>Fuegos Artificiales</h3>
+          <p>Espectaculares efectos de luz y color</p>
+          <a href="/productos.html" class="category-link">Ver más →</a>
+        </div>
+        <div class="category-card">
+          <div class="category-image">💥</div>
+          <h3>Petardos</h3>
+          <p>Para celebraciones con estruendo</p>
+          <a href="/productos.html" class="category-link">Ver más →</a>
+        </div>
+        <div class="category-card">
+          <div class="category-image">✨</div>
+          <h3>Bengalas</h3>
+          <p>Perfectas para eventos especiales</p>
+          <a href="/productos.html" class="category-link">Ver más →</a>
+        </div>
+        <div class="category-card">
+          <div class="category-image">🎇</div>
+          <h3>Cohetes</h3>
+          <p>Alcanza el cielo con nuestros cohetes</p>
+          <a href="/productos.html" class="category-link">Ver más →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <h2>¿Listo para hacer brillar tu evento?</h2>
+      <p>Explora nuestro catálogo completo y encuentra los productos perfectos para tu celebración.</p>
+      <a href="/productos.html" class="btn btn-primary btn-large">Explorar Productos</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3><span class="logo-icon">🎆</span> PyroShop</h3>
+          <p>Tu tienda de confianza para fuegos artificiales y petardos de la más alta calidad.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces Rápidos</h4>
+          <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/productos.html">Productos</a></li>
+            <li><a href="/chat.html">Soporte</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contacto</h4>
+          <ul>
+            <li>📧 info@pyroshop.com</li>
+            <li>📱 +34 900 123 456</li>
+            <li>💬 <a href="/chat.html">Chat en vivo</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 PyroShop. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal de Login/Registro -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <div class="auth-box">
+        <h2>Acceso de Usuario</h2>
+        
+        <!-- Tabs Login/Registro -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login">Iniciar Sesión</button>
+          <button class="auth-tab" id="tab-register">Registrarse</button>
+        </div>
+
+        <!-- Formulario Login -->
+        <form id="form-login" class="auth-form">
+          <input type="text" id="login-username" placeholder="Usuario" required>
+          <input type="password" id="login-password" placeholder="Contraseña" required>
+          <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
+
+        <!-- Formulario Registro -->
+        <form id="form-register" class="auth-form" style="display:none">
+          <input type="text" id="register-username" placeholder="Usuario" required>
+          <input type="password" id="register-password" placeholder="Contraseña" required>
+          <button type="submit" class="btn btn-primary">Registrarse</button>
+        </form>
+
+        <div id="auth-mensaje" class="mensaje"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Panel de Chat (oculto hasta login) -->
-  <div id="chat-container" class="chat-container" style="display:none">
-    <div class="chat-header">
-      <h2>Chat en Tiempo Real</h2>
-      <button id="btn-toggle-chat" class="btn-toggle-chat">Minimizar</button>
-    </div>
-    
-    <div class="chat-messages" id="chat-messages">
-      <!-- Los mensajes aparecerán aquí -->
-    </div>
-    
-    <div class="chat-form">
-      <form id="chat-form">
-        <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." autocomplete="off">
-        <button type="submit">Enviar</button>
-      </form>
-    </div>
-  </div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="main.js"></script>
+  <script src="landing.js"></script>
 </body>
 </html>
