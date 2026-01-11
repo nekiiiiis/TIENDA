@@ -1,176 +1,288 @@
-# Gestión de Productos - Sistema Web Full Stack
+# PyroShop - Plataforma E-Commerce
 
-Sistema web de gestión de productos desarrollado con **Node.js, Express, MongoDB y Vanilla JavaScript**. Permite a los usuarios registrarse, iniciar sesión, ver productos y a los administradores gestionar productos (crear, editar, eliminar) con imágenes mediante URLs. Incluye un chat en tiempo real para comunicación entre usuarios.
+**Repositorio:** https://github.com/nekiiiiis/TIENDA
+
+## Descripción
+
+Aplicación web de comercio electrónico desarrollada con Node.js, Express, MongoDB y GraphQL. Implementa autenticación JWT, control de acceso basado en roles, carrito de compras persistente, gestión de pedidos y comunicación en tiempo real mediante WebSockets.
 
 ---
 
-## Resumen de Funcionalidades
+## Tecnologías
 
-### Autenticación
-- Registro de usuarios
-- Inicio de sesión con JWT
-- Roles de usuario (admin/usuario)
-- Protección de rutas según permisos
-
-### Gestión de Productos
-- **Usuarios**: Visualización de productos con imágenes, búsqueda, ordenamiento y paginación
-- **Administradores**: 
-  - Crear productos con nombre, precio, descripción e imagen (URL)
-  - Editar productos existentes
-  - Eliminar productos
-  - Añadir y eliminar imagenes
-
-### Chat en Tiempo Real
-- Chat en vivo entre usuarios autenticados
-- Persistencia de mensajes en base de datos
-- Notificaciones de usuarios conectados
-
-### Auditoría
-- Registro de todas las acciones realizadas por usuarios y administradores
-- Logs de autenticación, creación, actualización y eliminación de productos
+| Capa | Tecnología |
+|------|------------|
+| Backend | Node.js, Express.js, MongoDB, Mongoose |
+| API | REST + GraphQL (Apollo Server) |
+| Autenticación | JWT, bcryptjs |
+| Tiempo Real | Socket.IO |
+| Frontend | HTML5, CSS3, JavaScript |
 
 ---
 
 ## Estructura del Proyecto
 
 ```
-TIENDA/
+Tienda/
 ├── backend/
-│   ├── config.js                 # Configuración de variables de entorno
-│   ├── server.js                 # Servidor principal Express + Socket.IO
-│   ├── package.json              # Dependencias del backend
-│   ├── routes/
-│   │   ├── authRoutes.js         # Rutas de autenticación
-│   │   ├── productRoutes.js      # Rutas de productos (alias)
-│   │   ├── productos.js          # Rutas de productos
-│   │   └── chatRoutes.js         # Rutas de chat
+│   ├── graphql/
+│   │   ├── schema.js          # Definición de tipos GraphQL
+│   │   └── resolvers.js       # Lógica de resolución
 │   ├── models/
-│   │   ├── User.js               # Modelo de usuario
-│   │   ├── Product.js            # Modelo de producto (alias)
-│   │   ├── Producto.js           # Modelo de producto
-│   │   ├── Message.js            # Modelo de mensajes del chat
-│   │   └── AuditLog.js           # Modelo de auditoría
+│   │   ├── User.js
+│   │   ├── Product.js
+│   │   ├── Order.js
+│   │   ├── Cart.js
+│   │   └── Message.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── ProductRoutes.js
+│   │   ├── userRoutes.js
+│   │   ├── cartRoutes.js
+│   │   └── orderRoutes.js
 │   ├── middlewares/
-│   │   ├── auth.js               # Middleware de autenticación JWT
-│   │   └── authenticateJWT.js    # Alias del middleware
-│   └── tests/
-│       └── productos.test.js     # Tests de productos
-└── frontend/
-    ├── index.html                # Página principal
-    ├── main.js                   # Lógica del frontend
-    ├── styles.css                # Estilos CSS
-    ├── client.js                 # Cliente adicional
-    └── chat.html                 # Página de chat
+│   │   └── auth.js
+│   └── server.js
+├── frontend/
+│   ├── index.html
+│   ├── productos.html
+│   ├── carrito.html
+│   ├── pedidos.html
+│   ├── admin.html
+│   ├── chat.html
+│   └── styles.css
+└── README.md
 ```
 
 ---
 
-## Librerías Utilizadas y su Uso
+## Modelos de Datos
 
-### Backend
+### User
+- `username`: String (único)
+- `password`: String (hash)
+- `role`: enum ['user', 'admin']
 
-**Dependencias principales:**
-- **express** (^4.19.2): Framework web para Node.js, maneja las rutas y middleware del servidor
-- **mongoose** (^8.0.0): ODM para MongoDB, gestiona los modelos y conexión a la base de datos
-- **socket.io** (^4.7.2): Comunicación en tiempo real bidireccional para el chat
-- **jsonwebtoken** (^9.0.2): Generación y verificación de tokens JWT para autenticación
-- **bcryptjs** (^3.0.2): Hash de contraseñas para almacenamiento seguro
-- **cors** (^2.8.5): Permite solicitudes cross-origin desde el frontend
-- **dotenv** (^16.4.5): Carga variables de entorno desde archivo .env
-- **morgan** (^1.10.0): Logger HTTP para desarrollo, registra las peticiones al servidor
+### Product
+- `nombre`: String
+- `precio`: Number
+- `descripcion`: String
+- `imagen`: String (URL)
+- `categoria`: enum ['fuegos-artificiales', 'petardos', 'bengalas', 'cohetes', 'otros']
 
-**Dependencias de desarrollo:**
-- **nodemon** (^3.1.0): Reinicia automáticamente el servidor durante el desarrollo
-- **jest** (^29.7.0): Framework de testing para pruebas unitarias
-- **supertest** (^6.3.4): Testing de APIs HTTP
-- **eslint** (^9.0.0): Linter para análisis de código
-- **prettier** (^3.3.2): Formateador automático de código
+### Cart
+- `userId`: ObjectId (ref: User)
+- `items`: Array [{productId, nombre, precio, imagen, cantidad}]
 
-### Frontend
-
-- **Vanilla JavaScript**: Lógica del frontend sin frameworks
-- **Socket.IO Client**: Cliente para conexión al servidor de Socket.IO
-- **CSS3**: Estilos modernos con gradientes, transiciones y diseño responsive
+### Order
+- `userId`: ObjectId (ref: User)
+- `username`: String
+- `items`: Array [{productId, nombre, precio, cantidad, subtotal}]
+- `total`: Number
+- `status`: enum ['pending', 'completed']
 
 ---
 
-## Instrucciones para Correr en Local
+## API REST
 
-### 1. Prerrequisitos
+### Autenticación
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/auth/register` | Registro |
+| POST | `/auth/login` | Login |
 
-- Node.js (versión 14 o superior)
-- MongoDB instalado y corriendo localmente
-- npm o yarn
+### Productos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/productos` | Listar |
+| POST | `/productos` | Crear (admin) |
+| PUT | `/productos/:id` | Actualizar (admin) |
+| DELETE | `/productos/:id` | Eliminar (admin) |
 
-### 2. Configuración del archivo .env
+### Carrito
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/cart` | Obtener carrito |
+| POST | `/api/cart/add` | Añadir producto |
+| PUT | `/api/cart/update` | Actualizar cantidad |
+| DELETE | `/api/cart/remove/:id` | Eliminar producto |
+| DELETE | `/api/cart/clear` | Vaciar carrito |
 
-Crear un archivo `.env` en la carpeta `backend/` con el siguiente contenido:
+### Pedidos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/orders` | Listar (admin) |
+| GET | `/api/orders/my-orders` | Mis pedidos |
+| POST | `/api/orders` | Crear pedido |
+| PUT | `/api/orders/:id/status` | Cambiar estado (admin) |
 
-```env
-PORT=3000
-MONGO_URI=mongodb://localhost:27017/tienda
-JWT_SECRET=tu_clave_secreta_muy_segura_aqui
-NODE_ENV=development
+### Usuarios (Admin)
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/users` | Listar usuarios |
+| PUT | `/api/users/:id/role` | Cambiar rol |
+| DELETE | `/api/users/:id` | Eliminar usuario |
+
+---
+
+## API GraphQL
+
+**Endpoint:** `/graphql`
+
+### Esquema GraphQL
+
+El esquema se divide en tipos, enumeraciones, queries y mutations.
+
+#### Enumeraciones
+
+```graphql
+enum OrderStatus { pending, completed }
+enum UserRole { user, admin }
+enum ProductCategory { fuegos_artificiales, petardos, bengalas, cohetes, otros }
 ```
 
-**Nota**: El archivo `.env` está en `.gitignore` y no debe subirse al repositorio.
+#### Tipos Principales
 
-### 3. Instalación de dependencias
+| Tipo | Descripción | Campos clave |
+|------|-------------|--------------|
+| `User` | Usuario del sistema | id, username, role |
+| `Product` | Producto del catálogo | id, nombre, precio, categoria |
+| `Cart` | Carrito de compras | id, userId, items[], total |
+| `Order` | Pedido realizado | id, userId, username, items[], total, status |
+| `CartItem` | Item del carrito | productId, nombre, precio, cantidad |
+| `OrderItem` | Item del pedido | productId, nombre, precio, cantidad, subtotal |
+
+#### Queries
+
+| Query | Descripción | Autenticación |
+|-------|-------------|---------------|
+| `products` | Lista todos los productos | No |
+| `product(id)` | Obtiene un producto | No |
+| `productsByCategory(categoria)` | Filtra por categoría | No |
+| `searchProducts(search)` | Búsqueda por texto | No |
+| `myCart` | Carrito del usuario | Sí |
+| `myOrders` | Pedidos del usuario | Sí |
+| `orders(status)` | Todos los pedidos | Admin |
+| `order(id)` | Detalle de pedido | Sí |
+| `users` | Lista usuarios | Admin |
+| `user(id)` | Detalle usuario | Admin |
+
+#### Mutations
+
+| Mutation | Descripción | Autenticación |
+|----------|-------------|---------------|
+| `addToCart(productId, cantidad)` | Añade al carrito | Sí |
+| `updateCartItem(productId, cantidad)` | Actualiza cantidad | Sí |
+| `removeFromCart(productId)` | Elimina del carrito | Sí |
+| `clearCart` | Vacía el carrito | Sí |
+| `createOrder` | Crea pedido desde carrito | Sí |
+| `updateOrderStatus(id, status)` | Cambia estado | Admin |
+| `cancelOrder(id)` | Cancela pedido | Sí |
+| `updateUserRole(id, role)` | Cambia rol | Admin |
+| `deleteUser(id)` | Elimina usuario | Admin |
+
+---
+
+## Decisiones de Diseño
+
+### Arquitectura Híbrida REST + GraphQL
+
+Se optó por mantener ambas APIs para:
+- **REST**: Autenticación (login/register) por su simplicidad y compatibilidad universal
+- **GraphQL**: Consultas de productos y gestión de pedidos por su flexibilidad en las consultas
+
+### Desnormalización en Cart y Order
+
+Los items del carrito y pedidos almacenan `nombre`, `precio` e `imagen` del producto directamente, no solo el `productId`. Esto permite:
+- Preservar el precio al momento de la compra
+- Evitar joins costosos en consultas frecuentes
+- Mantener historial preciso si el producto cambia
+
+### Autenticación via Contexto GraphQL
+
+El token JWT se extrae del header `Authorization` y se decodifica en el contexto de Apollo Server:
+
+```javascript
+context: async ({ req }) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (token) {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return { user: decoded };
+  }
+  return {};
+}
+```
+
+Los resolvers acceden a `context.user` para validar permisos.
+
+### Separación de Responsabilidades
+
+- **Schema (`schema.js`)**: Define la estructura de datos y operaciones disponibles
+- **Resolvers (`resolvers.js`)**: Implementa la lógica de negocio y acceso a datos
+- **Models**: Definen la estructura en MongoDB con Mongoose
+
+### Control de Acceso
+
+Tres niveles de acceso implementados en los resolvers:
+1. **Público**: Queries de productos (sin autenticación)
+2. **Usuario autenticado**: Operaciones de carrito y pedidos propios
+3. **Administrador**: Gestión de usuarios, todos los pedidos, cambio de estados
+
+---
+
+## Instalación
 
 ```bash
 cd backend
 npm install
 ```
 
-### 4. Iniciar MongoDB
-
-Asegúrate de que MongoDB esté corriendo:
-
-```bash
-# En Linux/Mac
-mongod
-
-# O si tienes MongoDB como servicio
-sudo systemctl start mongod
+Crear `.env`:
+```
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/tienda
+JWT_SECRET=clave_secreta
 ```
 
-### 5. Comandos para ejecutar
-
-#### Desarrollo (con auto-reload)
+Iniciar:
 ```bash
-cd backend
 npm run dev
 ```
 
-#### Producción
-```bash
-cd backend
-npm start
-```
+Acceder: `http://localhost:3000`
 
-#### Otros comandos útiles
-```bash
-npm run lint          # Analizar código con ESLint
-npm run lint:fix      # Corregir problemas de ESLint automáticamente
-npm run format        # Formatear código con Prettier
-npm test              # Ejecutar tests
-```
-
-### 6. Acceder a la aplicación
-
-Una vez iniciado el servidor, abre tu navegador en:
-
-```
-http://localhost:3000
-```
-
-El servidor sirve automáticamente los archivos estáticos del frontend desde la carpeta `frontend/`.
+GraphQL Playground: `http://localhost:3000/graphql`
 
 ---
 
-## Notas Adicionales
+## Funcionalidades por Rol
 
-- El servidor se ejecuta en el puerto 3000 por defecto (configurable en `.env`)
-- La base de datos MongoDB se llama `tienda` (configurable en `.env`)
-- Los usuarios registrados por defecto tienen rol `user`, los administradores deben crearse manualmente en la base de datos
-- El chat requiere autenticación para funcionar
+### Usuario
+- Registro y autenticación
+- Explorar y buscar productos
+- Gestionar carrito de compras
+- Realizar pedidos
+- Consultar historial de pedidos (`/pedidos.html`)
+- Chat de soporte
+
+### Administrador
+- Gestión CRUD de productos
+- Panel de administración (`/admin.html`)
+- Gestión de usuarios (roles, eliminación)
+- Gestión de pedidos (estados, visualización)
+- Responder chat de soporte
+
+---
+
+## Navegación
+
+| Elemento | Usuario | Administrador |
+|----------|---------|---------------|
+| Clic en nombre | → Mis Pedidos | → Panel Admin |
+| Carrito | → `/carrito.html` | → `/carrito.html` |
+
+---
+
+## Autor
+
+Neco Martinez - Programación Web I
